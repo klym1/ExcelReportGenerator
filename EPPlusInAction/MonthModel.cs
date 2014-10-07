@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,6 +10,19 @@ namespace ExcelReportGenerator
     {
         public List<RecordRaw1> Records { get; private set; }
         public string Name { get; set; }
+
+        public string MonthName
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Name))
+                {
+                    return Name.Substring(0, Name.IndexOf(' '));
+                }
+
+                return String.Empty;
+            }
+        }
 
         public MonthModel()
         {

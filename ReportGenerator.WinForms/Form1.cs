@@ -74,6 +74,10 @@ namespace ReportGenerator.WinForms
 
                     if (j == allTasks)
                     {
+                        var modelsProcessor = new DataProcessor(monthModels);
+
+                        modelsProcessor.Process();
+
                         XtraMessageBox.Show("Done!");
 
                     }

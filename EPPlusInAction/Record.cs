@@ -1,7 +1,35 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ExcelReportGenerator
 {
+    public class DataProcessor
+    {
+        private readonly Collection<MonthModel> _monthModels;
+
+
+        public DataProcessor(Collection<MonthModel> monthModels)
+        {
+            this._monthModels = monthModels;
+        }
+
+        public void Process()
+        {
+            var t = from model in _monthModels
+                group model by model.MonthName
+                into monthWithDays
+                select monthWithDays;
+        }
+
+    }
+
+    public class MonthSheetModel
+    {
+        public string Name { get; set; }
+
+    }
+
     public class RecordRaw
     {
         public string sys_acs_cd { get; set; }

@@ -279,7 +279,6 @@
             this.ClientSize = new System.Drawing.Size(551, 391);
             this.Controls.Add(this.layoutControl1);
             this.Name = "Form1";
-            this.ShowIcon = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Report Generator";
