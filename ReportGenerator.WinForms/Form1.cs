@@ -25,6 +25,8 @@ namespace ReportGenerator.WinForms
 
             var h = g.GetMonthModel();
 
+            var j = h.Records.Where(it => it.cst_nm < 0).OrderBy(it => it.cst_nam).ToList();
+
         }
         
         private void buttonBrowseFiles_Click_1(object sender, EventArgs e)
