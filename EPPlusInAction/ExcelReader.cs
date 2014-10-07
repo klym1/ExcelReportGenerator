@@ -1,11 +1,32 @@
 ﻿using System;
-using System.Data;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Excel;
+using Falcon.Excel;
+using log4net.ObjectRenderer;
 
 namespace ExcelReportGenerator
 {
+    public static class Single
+    {
+        private static ExcelController _excelController;
+
+        public static ExcelController Instanse
+        {
+            get
+            {
+                if (_excelController == null)
+                {
+                    _excelController = new ExcelController();
+                }
+
+                return _excelController;
+            }
+        }
+    }
+
     public class ExcelReader
     {
         private readonly string _filePath;
@@ -20,67 +41,120 @@ namespace ExcelReportGenerator
             }
         }
 
-        private int? GetNullableIntFromDouble(double? d)
+        private const int MaxRows = 8096;
+
+        private void DebugOpcode(UInt16 opcode)
         {
-            if (d.HasValue)
+            switch (opcode)
             {
-                if (Math.Round((decimal) d.Value) == Convert.ToDecimal(d.Value))
-                {
-                    return Convert.ToInt32(d.Value);
-                }
-
-                throw new Exception("True doulbe");
+                case 0x00:
+                    Debug.WriteLine("Dimensions");
+                    break;
             }
+        }
 
-            return null;
+        private void ReadBody(BinaryReader reader, int bytes)
+        {
+            switch (bytes)
+            {
+                case 0: break;
+                case 1:
+                    reader.ReadByte(); 
+                    break;
+                case 2:
+                    reader.ReadUInt16();
+                    break;
+                case 4:
+                    reader.ReadUInt32();
+                    break;
+                case 8:
+                    reader.ReadUInt64();
+                    break;
+                case 12:
+                    reader.ReadUInt64();
+                    reader.ReadUInt32();
+                    break;
+            }
         }
 
         public MonthModel GetMonthModel()
         {
-            FileStream stream = File.Open(_filePath, FileMode.Open,
-                              FileAccess.Read, FileShare.ReadWrite);
-            
-            using (IExcelDataReader excelReader = ExcelReaderFactory.CreateBinaryReader(stream))
+            var sheetName =  Path.GetFileNameWithoutExtension(_filePath);
+
+
+            var url1 = @"C:\Users\mykola.klymyuk\Desktop\3rd Quater 2014\Aug " + 19 + @" 2014.xls";
+            var url2 = @"C:\Users\mykola.klymyuk\Desktop\3rd Quater 2014\Aug " + 7 + @" 2014.xls";
+
+            var arr1 = new Collection<Int64>();
+
+            using (Stream stream = new FileStream(url1, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                excelReader.IsFirstRowAsColumnNames = true;
-                DataSet result = excelReader.AsDataSet();
-
-                var table = result.Tables[0].AsEnumerable();
-
-                var g =
-                    table.AsEnumerable()
-                        .Select(dataRow => new RecordRaw
-                        {
-                            sys_acs_cd = dataRow.Field<string>("sys_acs_cd"),
-                            cst_nm = dataRow.Field<double?>("cst_nm"),
-                            cst_nam = dataRow.Field<string>("cst_nam"),
-                            bsns_srvc_nm = dataRow.Field<double?>("bsns_srvc_nm"),
-                            bsns_trn_long_nam = dataRow.Field<string>("bsns_trn_long_nam"),
-                            bsns_srvc_prcs_dt = dataRow.Field<string>("bsns_srvc_prcs_dt"),
-                            plcy_nm = dataRow.Field<double?>("plcy_nm"),
-                            plt_cd = dataRow.Field<string>("plt_cd"),
-                            iss_stck_ref_nm = dataRow.Field<string>("iss_stck_ref_nm"),
-                            bsns_srvc_sum_amt = dataRow.Field<double?>("bsns_srvc_sum_amt"),
-                        })
-                        .Select(it => new RecordStrict
-                        {
-                            sys_acs_cd = it.sys_acs_cd,
-                            cst_nm = GetNullableIntFromDouble(it.cst_nm),
-
-                            cst_nam = it.cst_nam,
-                            bsns_srvc_nm = it.bsns_srvc_nm,
-                            bsns_trn_long_nam = it.bsns_trn_long_nam,
-                            bsns_srvc_prcs_dt = it.bsns_srvc_prcs_dt,
-                            plcy_nm = it.plcy_nm,
-                            plt_cd = it.plt_cd,
-                            iss_stck_ref_nm = it.iss_stck_ref_nm,
-                            bsns_srvc_sum_amt = it.bsns_srvc_sum_amt,
-                        });
-                        
-                
-
-                return new MonthModel(g);
+                using (var memoryStream = new BinaryReader(stream))
+                {
+                    for (int i = 0; i < 50; i++)
+                    {
+                        arr1.Add(memoryStream.ReadInt64());
+                    }
+                    
+                }
             }
+
+            var arr2 = new Collection<Int64>();
+
+            using (Stream stream = new FileStream(url2, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                using (var memoryStream = new BinaryReader(stream))
+                {
+                    for (int i = 0; i < 50; i++)
+                    {
+                        arr2.Add(memoryStream.ReadInt64());
+                    }
+
+                }
+            }
+
+           
+           
+           
+
+
+            var t = new MyExcelReader();
+
+         var g =   t.Page_Load(_filePath);
+
+            //var t = new Net.SourceForge.Koogra.Excel.Workbook(_filePath);
+
+           // var sheets = t.Sheets;
+            
+          //  Single.Instanse.OpenFile(_filePath);
+            
+            var currentRowIndex = 1; // exclude headers
+
+            var list = new List<RecordRaw1>();
+
+            while (currentRowIndex < MaxRows)
+            {
+                var row = new RecordRaw1
+               {
+                   sys_acs_cd = ((object)Single.Instanse.GetData(sheetName, currentRowIndex, 0)),
+//                   cst_nm = ((object)g.GetData(sheetName, currentRowIndex, 1)),
+//                   cst_nam = ((object)g.GetData(sheetName, currentRowIndex, 2)),
+//                   bsns_srvc_nm = ((object)g.GetData(sheetName, currentRowIndex, 3)),
+//                   bsns_trn_long_nam = ((object)g.GetData(sheetName, currentRowIndex, 4)),
+//                   bsns_srvc_prcs_dt = ((object)g.GetData(sheetName, currentRowIndex, 5)),
+//                   plcy_nm = ((object)g.GetData(sheetName, currentRowIndex, 6)),
+//                   plt_cd = ((object)g.GetData(sheetName, currentRowIndex, 7)),
+//                   iss_stck_ref_nm = ((object)g.GetData(sheetName, currentRowIndex, 8)),
+//                   bsns_srvc_sum_amt = ((object)g.GetData(sheetName, currentRowIndex, 9))
+                };
+
+                if(row.IsEmpty) break;
+                
+                list.Add(row);
+                currentRowIndex++;
+            }
+            
+            return new MonthModel(list);
         }
     }
 }

@@ -7,14 +7,14 @@ namespace ExcelReportGenerator
 {
     public class MonthModel
     {
-        public List<RecordStrict> Records { get; private set; }
+        public List<RecordRaw1> Records { get; private set; }
 
         public MonthModel()
         {
-            Records = new List<RecordStrict>();
+            Records = new List<RecordRaw1>();
         }
 
-        public MonthModel(IEnumerable<RecordStrict> records)
+        public MonthModel(IEnumerable<RecordRaw1> records)
         {
             Records = records.ToList();
         }
