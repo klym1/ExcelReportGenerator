@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraPrinting.Native;
+using ExcelReportGenerator;
 
 namespace ReportGenerator.WinForms
 {
@@ -19,6 +20,11 @@ namespace ReportGenerator.WinForms
         public Form1()
         {
             InitializeComponent();
+
+            var g = new ExcelReader(@"C:\Users\Микола\Desktop\3rd Quater 2014\Aug 14 2014.xls");
+
+            var h = g.GetMonthModel();
+
         }
         
         private void buttonBrowseFiles_Click_1(object sender, EventArgs e)
@@ -39,6 +45,15 @@ namespace ReportGenerator.WinForms
             {
                 checkedListBoxControl1.SetItemChecked(i, !checkedListBoxControl1.GetItemChecked(i));
             }
+        }
+
+        private void simpleButton2_Click(object sender, EventArgs e)
+        {
+            var g = new ExcelReader(checkedListBoxControl1.GetItemText(0));
+
+            var h = g.GetMonthModel();
+
+            var j = h;
         }
     }
 }
