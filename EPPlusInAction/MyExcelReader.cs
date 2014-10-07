@@ -3,27 +3,21 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using NetOffice.VBIDEApi.Enums;
 
 namespace ExcelReportGenerator
 {
     class MyExcelReader
     {
-        public string Page_Load(string name)
+        private object[,] _result;
+
+        public object[,] Page_Load(string name)
         {
             string fName = name;
 
             bool bFindBOF = true;
-
-            int col = 0;
-            int row = 0;
-            int totalCols = 10;
-
+            
             int j = 0;
-            if ((string.IsNullOrEmpty(fName)))
-            {
-                return String.Empty;
-            }
+                
             //Read XLS file
             try
             {
@@ -37,7 +31,7 @@ namespace ExcelReportGenerator
                             if (bFindBOF)
                             {
                                 //Get BOF Record
-                                while (j < fStream.Length - 3 & bFindBOF == true)
+                                while (j < fStream.Length - 3 & bFindBOF)
                                 {
                                     uBuffer = bReader.ReadUInt16();
                                     //BOF = 0x0009
@@ -53,13 +47,7 @@ namespace ExcelReportGenerator
                                     uBuffer = bReader.ReadUInt16();
                                     //Response += ("Length = " + uBuffer.ToString() + " | Offset = " + j.ToString());
                                     j = j + 2;
-                                    //Get Record Body
-                                   // Response += ((uBuffer > 0 ? " | Body = " : string.Empty));
-//                                    for (var i = 1; i <= uBuffer; i++)
-//                                    {
-//                                        bBuffer = bReader.ReadByte();
-//                                     //   Response += (GetByteHex(bBuffer) + " | ");
-//                                    }
+
                                     var id = uBuffer;
 
                                     if (id == 0x004)
@@ -71,9 +59,7 @@ namespace ExcelReportGenerator
                                         Debug.WriteLine(g);
 
                                     }
-
-
-                                  //  Response += ("<br/>");
+                                    
                                     j = j + uBuffer;
                                 }
                                 else
@@ -117,41 +103,42 @@ namespace ExcelReportGenerator
 
                                     var jjj = FromTo(stringArray, 8, stringArray.Length);
 
-                                    var g = Encoding.Default.GetString(jjj);
-                                    
-                                    var IndexToRow = FromTo(stringArray, 0, 2);
-                                    var IndexToColumn = FromTo(stringArray, 2, 4);
+                                    var row = BitConverter.ToInt16(FromTo(stringArray, 0, 2), 0);
+                                    var col = BitConverter.ToInt16(FromTo(stringArray, 2, 4), 0);
 
-                                    tttt(col, totalCols, ref row, g);
+                                    _result[row, col] = Encoding.Default.GetString(jjj);
 
                                 }
                                 else if (id == 0x0024) //COLWIDTH
-
                                 {
-                                    var h = 6;
-                                    ;
+                                    //ignore
                                 }
                                 else if (id == 0x0000) //Dimensions
                                 {
-                                   // var Dimensions = bReader.ReadBytes(uBuffer);
+                                    //0 2 Index to first used row
+                                    //2 2 Index to last used row, increased by 1
+                                    //4 2 Index to first used column
+                                    //6 2 Index to last used column, increased by 1
+
+                                    var rows = BitConverter.ToInt16(FromTo(stringArray, 2, 4), 0);
+                                    var cols = BitConverter.ToInt16(FromTo(stringArray, 6, 8), 0);
+
+                                    _result = new object[rows, cols];
                                 }
                                 else if (id == 0x0003) //Number
                                 {
                                     var fromTo = FromTo(stringArray, 7, 15);
 
-                                    var IndexToRow = FromTo(stringArray, 0, 2);
-                                    var IndexToColumn = FromTo(stringArray, 2, 4);
+                                    var row = BitConverter.ToInt16(FromTo(stringArray, 0, 2), 0);
+                                    var col = BitConverter.ToInt16(FromTo(stringArray, 2, 4), 0);
 
                                     var number = BitConverter.ToDouble(fromTo, 0);
 
-                                    tttt(col, totalCols, ref row, number);
-                                }
-                                else
-                                {
-                                    var k = 9;
-                                }
+                                    _result[row, col] = number;
 
-                                //Response += ("<br/>");
+                                }
+                                
+
                                 j = j + uBuffer;
                             }
                         }
@@ -168,23 +155,7 @@ namespace ExcelReportGenerator
             }
 
          //   return Response;    
-            return string.Empty;
-        }
-
-        private static int tttt(int col, int totalCols, ref int row, object s)
-        {
-            Debug.Write(s + " ");
-
-            col++;
-
-            if (col == totalCols)
-            {
-                col = 0;
-                row++;
-
-                Debug.WriteLine("");
-            }
-            return col;
+            return _result;
         }
 
         private byte[] FromTo(byte[] y, int from, int to)
@@ -201,75 +172,6 @@ namespace ExcelReportGenerator
             }
 
             return array;
-        }
-
-//        private string GetUInt16Hex(UInt16 pValue)
-//        {
-//            string sResult = "0x";
-//            double dTemp = 0;
-//            //16^3
-//            dTemp = Math.Floor((double) (pValue / 4096));
-//            sResult = sResult + GetHexLetter(dTemp).ToString();
-//            pValue = (ushort) (pValue - (dTemp * 4096));
-//            //16^2
-//            dTemp = Math.Floor((double) (pValue / 256));
-//            sResult = sResult + GetHexLetter(dTemp).ToString();
-//            pValue = (ushort) (pValue - (dTemp * 256));
-//            //16^1
-//            dTemp = Math.Floor((double) (pValue / 16));
-//            sResult = sResult + GetHexLetter(dTemp).ToString();
-//            pValue = (ushort) (pValue - (dTemp * 16));
-//            //16^0
-//            sResult = sResult + GetHexLetter(pValue).ToString();
-//            return sResult;
-//        }
-
-//        private string GetByteHex(UInt16 pValue)
-//        {
-//            string sResult = "0x";
-//            double dTemp = 0;
-//            //16^1
-//            dTemp = Math.Floor((double) (pValue / 16));
-//            sResult = sResult + GetHexLetter(dTemp).ToString();
-//            pValue = (ushort) (pValue - (dTemp * 16));
-//            //16^0
-//            sResult = sResult + GetHexLetter(pValue).ToString();
-//            return sResult;
-//        }
-
-//        private string GetHexLetter(double pValue)
-//        {
-//            string sResult = string.Empty;
-//            if (pValue < 10)
-//            {
-//                sResult = pValue.ToString();
-//            }
-//            else if (pValue == 10)
-//            {
-//                sResult = "A";
-//            }
-//            else if (pValue == 11)
-//            {
-//                sResult = "B";
-//            }
-//            else if (pValue == 12)
-//            {
-//                sResult = "C";
-//            }
-//            else if (pValue == 13)
-//            {
-//                sResult = "D";
-//            }
-//            else if (pValue == 14)
-//            {
-//                sResult = "E";
-//            }
-//            else if (pValue == 15)
-//            {
-//                sResult = "F";
-//            }
-//            return sResult;
-//        }
-        
+        }   
     }
 }

@@ -26,15 +26,7 @@ namespace ReportGenerator.WinForms
         {
             InitializeComponent();
 
-            int totalIterations = 30;
-
             monthModels = new Collection<MonthModel>();
-
-            var g = new ExcelReader(@"C:\Users\mykola.klymyuk\Desktop\3rd Quater 2014\Aug " + 19 + @" 2014.xls");
-
-           var h = g.GetMonthModel();
-            //var j = h.Records.Where(it => it.cst_nm < 0).OrderBy(it => it.cst_nam).ToList();
-
         }
         
         private static Collection<MonthModel> monthModels { get; set; } 
@@ -63,9 +55,9 @@ namespace ReportGenerator.WinForms
 
         private void simpleButton2_Click(object sender, EventArgs e)
         {
-            layoutControlItem5.Visibility = LayoutVisibility.Always;
+            //layoutControlItem5.Visibility = LayoutVisibility.Always;
 
-            var allTasks = 25;
+            var allTasks = checkedListBoxControl1.Items.Count;
             j = 0;
 
             var tasks = Enumerable.Range(0, checkedListBoxControl1.Items.Count).Select(it => new Task(() =>
@@ -77,21 +69,19 @@ namespace ReportGenerator.WinForms
                     var h = g.GetMonthModel();
 
                     monthModels.Add(h);
+
                     j++;
 
-                    if (j > allTasks)
+                    if (j == allTasks)
                     {
-                        var h2 = monthModels;
+                        XtraMessageBox.Show("Done!");
+
                     }
 
-                  //  progressBarControl1.Position += 4;
-                  //  progressBarControl1.Refresh();
-
-                    Debug.WriteLine(it + " --- " + h.Records.Count);
                 }
-                catch (Exception )
+                catch (Exception ew)
                 {
-                    Debug.WriteLine(it + " Exception");
+                    XtraMessageBox.Show("Error" + ew);
                 }
             }));
 

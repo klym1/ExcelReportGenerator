@@ -8,6 +8,7 @@ namespace ExcelReportGenerator
     public class MonthModel
     {
         public List<RecordRaw1> Records { get; private set; }
+        public string Name { get; set; }
 
         public MonthModel()
         {

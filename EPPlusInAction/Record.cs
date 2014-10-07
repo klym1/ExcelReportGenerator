@@ -42,22 +42,5 @@ namespace ExcelReportGenerator
         public object plt_cd { get; set; }
         public object iss_stck_ref_nm { get; set; }
         public object bsns_srvc_sum_amt { get; set; }
-
-        public bool IsEmpty
-        {
-            get
-            {
-                return sys_acs_cd == null
-                       && cst_nm == null
-                       && cst_nam == null
-                       && bsns_srvc_nm == null
-                       && bsns_trn_long_nam == null
-                       && bsns_srvc_prcs_dt == null
-                       && plcy_nm == null
-                       && plt_cd == null
-                       && iss_stck_ref_nm == null
-                       && bsns_srvc_sum_amt == null;
-            }
-        }
     }
 }
