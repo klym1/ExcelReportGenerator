@@ -30,7 +30,9 @@ namespace ExcelReportGenerator
 
                 //excluding headers, starting from first row
 
-                for (int i = 1; i < g.GetLength(0); i++)
+                var rowsNumber = g.GetLength(0);
+                
+                for (int i = 1; i < rowsNumber; i++)
                 {
                     var row = new RecordRaw1
                     {

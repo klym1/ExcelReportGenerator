@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DevExpress.XtraEditors;
+using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraPrinting.Native;
 using ExcelReportGenerator;
 
@@ -30,7 +32,6 @@ namespace ReportGenerator.WinForms
 
             checkedListBoxControl1.Items.Clear();
             openFileDialog1.FileNames.ForEach(it => checkedListBoxControl1.Items.Add(it, CheckState.Checked));
-
         }
 
         private void simpleButtonSelectUnselectAll_Click(object sender, EventArgs e)
@@ -43,12 +44,22 @@ namespace ReportGenerator.WinForms
 
         private static int j;
 
+        private List<string> CheckedItems
+        {
+            get
+            {
+             var result = checkedListBoxControl1.Items.GetCheckedValues();
+
+                return result.Cast<string>().ToList();
+            }
+        }
+
         private void simpleButton2_Click(object sender, EventArgs e)
         {
-            EnableAll(false);
-
-            var allTasks = checkedListBoxControl1.Items.Count;
+            var allTasks = CheckedItems.Count;
             
+            if(allTasks > 0) EnableAll(false);
+
             j = 0;
             monthModels.Clear();
             
@@ -56,32 +67,30 @@ namespace ReportGenerator.WinForms
             {
                 try
                 {
-                    var g = new ExcelReader((string)checkedListBoxControl1.Items[it].Value);
+                    var g = new ExcelReader((string)CheckedItems[it]);
 
-                    var h = g.GetMonthModel();
-
-                    monthModels.Add(h);
+                    monthModels.Add(g.GetMonthModel());
 
                     j++;
 
-                    if (j == allTasks)
-                    {
-                        var modelsProcessor = new DataProcessor(monthModels);
+                    if (j != allTasks) return;
 
-                        modelsProcessor.Process();
+                    var modelsProcessor = new DataProcessor(monthModels);
 
-                        Invoke(new Action(() => EnableAll(true)));
-                    }
+                    modelsProcessor.Process();
 
+                    Invoke(new Action(() => EnableAll(true)));
                 }
                 catch (Exception ew)
                 {
-                    Invoke(new Action(() => EnableAll(true)));
-                    XtraMessageBox.Show("Error" + ew.Message);
+                    Invoke(new Action(() =>
+                    {
+                        EnableAll(true);
+                        XtraMessageBox.Show(ew.Message);
+                    }));
                 }
             }));
-
-
+            
             Parallel.ForEach(tasks, it => it.Start());
         }
 
