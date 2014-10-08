@@ -39,6 +39,7 @@ namespace ReportGenerator.WinForms
 
             openFileDialog1.ShowDialog();
 
+            checkedListBoxControl1.Items.Clear();
             openFileDialog1.FileNames.ForEach(it => checkedListBoxControl1.Items.Add(it, CheckState.Checked));
 
         }
@@ -57,10 +58,14 @@ namespace ReportGenerator.WinForms
         {
             //layoutControlItem5.Visibility = LayoutVisibility.Always;
 
+            simpleButtonGenerate.Enabled = false;
+
             var allTasks = checkedListBoxControl1.Items.Count;
             j = 0;
 
-            var tasks = Enumerable.Range(0, checkedListBoxControl1.Items.Count).Select(it => new Task(() =>
+            monthModels.Clear();
+            
+            var tasks = Enumerable.Range(0, allTasks).Select(it => new Task(() =>
             {
                 try
                 {
@@ -77,6 +82,11 @@ namespace ReportGenerator.WinForms
                         var modelsProcessor = new DataProcessor(monthModels);
 
                         modelsProcessor.Process();
+
+                        Invoke(new Action(() =>
+                        {
+                            simpleButtonGenerate.Enabled = true;      
+                        }));
 
                         XtraMessageBox.Show("Done!");
 

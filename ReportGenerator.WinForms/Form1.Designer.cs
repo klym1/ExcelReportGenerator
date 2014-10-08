@@ -36,7 +36,7 @@
             this.labelControl2 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
             this.progressBarControl1 = new DevExpress.XtraEditors.ProgressBarControl();
-            this.simpleButton2 = new DevExpress.XtraEditors.SimpleButton();
+            this.simpleButtonGenerate = new DevExpress.XtraEditors.SimpleButton();
             this.checkedListBoxControl1 = new DevExpress.XtraEditors.CheckedListBoxControl();
             this.buttonBrowseFiles = new DevExpress.XtraEditors.SimpleButton();
             this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
@@ -71,7 +71,7 @@
             this.layoutControl1.Controls.Add(this.labelControl2);
             this.layoutControl1.Controls.Add(this.labelControl1);
             this.layoutControl1.Controls.Add(this.progressBarControl1);
-            this.layoutControl1.Controls.Add(this.simpleButton2);
+            this.layoutControl1.Controls.Add(this.simpleButtonGenerate);
             this.layoutControl1.Controls.Add(this.checkedListBoxControl1);
             this.layoutControl1.Controls.Add(this.buttonBrowseFiles);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -122,17 +122,17 @@
             this.progressBarControl1.TabIndex = 8;
             this.progressBarControl1.Visible = false;
             // 
-            // simpleButton2
+            // simpleButtonGenerate
             // 
-            this.simpleButton2.Appearance.Font = new System.Drawing.Font("Tahoma", 12F);
-            this.simpleButton2.Appearance.Options.UseFont = true;
-            this.simpleButton2.Location = new System.Drawing.Point(177, 337);
-            this.simpleButton2.Name = "simpleButton2";
-            this.simpleButton2.Size = new System.Drawing.Size(196, 26);
-            this.simpleButton2.StyleController = this.layoutControl1;
-            this.simpleButton2.TabIndex = 7;
-            this.simpleButton2.Text = "Generate";
-            this.simpleButton2.Click += new System.EventHandler(this.simpleButton2_Click);
+            this.simpleButtonGenerate.Appearance.Font = new System.Drawing.Font("Tahoma", 12F);
+            this.simpleButtonGenerate.Appearance.Options.UseFont = true;
+            this.simpleButtonGenerate.Location = new System.Drawing.Point(177, 337);
+            this.simpleButtonGenerate.Name = "simpleButtonGenerate";
+            this.simpleButtonGenerate.Size = new System.Drawing.Size(196, 26);
+            this.simpleButtonGenerate.StyleController = this.layoutControl1;
+            this.simpleButtonGenerate.TabIndex = 7;
+            this.simpleButtonGenerate.Text = "Generate";
+            this.simpleButtonGenerate.Click += new System.EventHandler(this.simpleButton2_Click);
             // 
             // checkedListBoxControl1
             // 
@@ -187,7 +187,7 @@
             // 
             // layoutControlItem4
             // 
-            this.layoutControlItem4.Control = this.simpleButton2;
+            this.layoutControlItem4.Control = this.simpleButtonGenerate;
             this.layoutControlItem4.ControlAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.layoutControlItem4.CustomizationFormText = "layoutControlItem4";
             this.layoutControlItem4.Location = new System.Drawing.Point(0, 325);
@@ -304,7 +304,7 @@
         private DevExpress.LookAndFeel.DefaultLookAndFeel defaultLookAndFeel;
         private DevExpress.XtraLayout.LayoutControl layoutControl1;
         private DevExpress.XtraEditors.ProgressBarControl progressBarControl1;
-        private DevExpress.XtraEditors.SimpleButton simpleButton2;
+        private DevExpress.XtraEditors.SimpleButton simpleButtonGenerate;
         private DevExpress.XtraEditors.CheckedListBoxControl checkedListBoxControl1;
         private DevExpress.XtraEditors.SimpleButton buttonBrowseFiles;
         private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;

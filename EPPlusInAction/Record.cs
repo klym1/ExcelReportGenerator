@@ -16,7 +16,10 @@ namespace ExcelReportGenerator
 
         public void Process()
         {
-            var t = from model in _monthModels
+            var orderedModels = _monthModels.OrderBy(it => it.Day);
+
+
+            var t = from model in orderedModels
                 group model by model.MonthName
                 into monthWithDays
                 select monthWithDays;
