@@ -41,7 +41,7 @@ namespace ExcelReportGenerator
             {
                 if (paramsList != null)
                 {
-                    return String.Format("{0} {1}", paramsList[0],paramsList[2]);
+                    return String.Format("{0} {1}", paramsList[0] ?? String.Empty,paramsList[2] ?? String.Empty);
                 }
 
                 return String.Empty;
@@ -61,7 +61,7 @@ namespace ExcelReportGenerator
             }
         }
 
-        public int? Day
+        public int Day
         {
             get
             {

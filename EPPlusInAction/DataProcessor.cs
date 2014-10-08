@@ -4,7 +4,9 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using NPOI.HSSF.Util;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 
 namespace ExcelReportGenerator
 {
@@ -19,11 +21,14 @@ namespace ExcelReportGenerator
 
         public void GenerateExcelResult(Collection<MonthSheetModel> monthSheets)
         {
-            Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+          //  Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             
-            string file = "Quarter-Report.xlsx";
+          //  string file = "Quarter-Report.xlsx";
+
+            string file = Path.GetTempFileName() + ".xlsx";
 
             var excel = new ExcelFile.net.ExcelFile(true);
+            
             
             foreach (var monthSheetModel in monthSheets)
             {
@@ -78,7 +83,8 @@ namespace ExcelReportGenerator
                 row.Cell(monthSheetModel.ColumnsTotals.Sum(), 1, 2,
                     excel.NewStyle().
                     Align(HorizontalAlignment.Center)
-                    .FontSize(20)
+                    .FontSize((double)20)
+                    
                     .Color(HSSFColor.Red.Index)
                     );
 

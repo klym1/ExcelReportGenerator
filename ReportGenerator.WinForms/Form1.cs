@@ -58,40 +58,56 @@ namespace ReportGenerator.WinForms
         {
             var allTasks = CheckedItems.Count;
             
-            if(allTasks > 0) EnableAll(false);
+            if(allTasks == 0) return;
+                
+                EnableAll(false);
 
             j = 0;
             monthModels.Clear();
             
-            var tasks = Enumerable.Range(0, allTasks).Select(it => new Task(() =>
+          //  var tasks = Enumerable.Range(0, allTasks).Select(it => new Task(() =>
+          //  {
+
+            BeginInvoke(new Action(() =>
             {
-                try
+
+                for (int it = 0; it < allTasks; it++)
                 {
-                    var g = new ExcelReader((string)CheckedItems[it]);
-
-                    monthModels.Add(g.GetMonthModel());
-
-                    j++;
-
-                    if (j != allTasks) return;
-
-                    var modelsProcessor = new DataProcessor(monthModels);
-
-                    modelsProcessor.Process();
-
-                    Invoke(new Action(() => EnableAll(true)));
-                }
-                catch (Exception ew)
-                {
-                    Invoke(new Action(() =>
+                    try
                     {
-                        EnableAll(true);
-                        XtraMessageBox.Show(ew.Message);
-                    }));
+                        var g = new ExcelReader((string)CheckedItems[it]);
+
+                        monthModels.Add(g.GetMonthModel());
+
+                        j++;
+
+                    }
+                    catch (Exception ew)
+                    {
+                        Invoke(new Action(() =>
+                        {
+                            EnableAll(true);
+                            XtraMessageBox.Show(ew.Message);
+                        }));
+
+                        return;
+                    }
                 }
+
+
+                var modelsProcessor = new DataProcessor(monthModels);
+
+                modelsProcessor.Process();
+
+                Invoke(new Action(() => EnableAll(true)));
+
             }));
+
             
-            Parallel.ForEach(tasks, it => it.Start());
+            
+            //  }));
+            
+         //   Parallel.ForEach(tasks, it => it.Start());
         }
 
         private void EnableAll(bool state)
