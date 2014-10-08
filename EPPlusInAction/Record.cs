@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using ExcelFile.net;
+using NPOI.HSSF.UserModel;
 
 namespace ExcelReportGenerator
 {
@@ -14,13 +18,63 @@ namespace ExcelReportGenerator
             _monthModels = monthModels;
         }
 
+        public void GenerateExcelResult(Collection<MonthSheetModel> monthSheets)
+        {
+            string file =  Path.Combine(Path.GetTempPath(), "newdoc.xlsx");
+
+            var excel = new ExcelFile.net.ExcelFile(true);
+            
+            foreach (var monthSheetModel in monthSheets)
+            {
+                excel.Sheet(monthSheetModel.Name, 15);
+
+                var row = excel.Row();
+
+                row.Cell(null);
+
+                for (int i = 0; i < monthSheetModel.Columns.ToArray().Length; i++)
+                {
+                    var column = monthSheetModel.Columns.ToArray()[i];
+
+                    row.Cell(column);
+                }
+
+                for (int j = 0; j < monthSheetModel.DaySheetModels.Count; j++)
+                {
+                    row = excel.Row();
+
+                    var dict = monthSheetModel.DaySheetModels[j].Row;
+
+                    row.Cell(monthSheetModel.DaySheetModels[j].DayNumber);
+
+                    for (int i = 0; i < monthSheetModel.Columns.ToArray().Length; i++)
+                    {
+                        var column = monthSheetModel.Columns.ToArray()[i];
+
+                        if (dict.ContainsKey(column))
+                        {
+                            row.Cell(dict[column].Value);
+                        }
+                        else
+                        {
+                            row.Empty();
+                        }
+                    }
+                } 
+            }
+            
+            excel.Save(file);
+            
+            System.Diagnostics.Process.Start(file);
+        }
+
         public void Process()
         {
             var monthSheets = new Collection<MonthSheetModel>();
 
             var t = from model in _monthModels
                 orderby model.Day
-                group model by model.MonthName
+                    group model by model.MonthNameAndYear
                 into monthWithDays
                 select new
                 {
@@ -39,7 +93,7 @@ namespace ExcelReportGenerator
                 {
                     var day = new DaySheetModel
                     {
-                        DayNumber = monthModel.Name,
+                        DayNumber = monthModel.NameWithComma
                     };
 
                     var rows = from record in monthModel.Records
@@ -63,6 +117,8 @@ namespace ExcelReportGenerator
 
                 monthSheets.Add(model);
             }
+
+            GenerateExcelResult(monthSheets);
         }
     }
 
@@ -92,35 +148,7 @@ namespace ExcelReportGenerator
             Row = new Dictionary<string, int?>();
         }
     }
-
-//    public class RecordRaw
-//    {
-//        public string sys_acs_cd { get; set; }
-//        public double? cst_nm { get; set; }
-//        public string cst_nam { get; set; }
-//        public double? bsns_srvc_nm { get; set; }
-//        public string bsns_trn_long_nam { get; set; }
-//        public string bsns_srvc_prcs_dt { get; set; }
-//        public double? plcy_nm { get; set; }
-//        public string plt_cd { get; set; }
-//        public string iss_stck_ref_nm { get; set; }
-//        public object bsns_srvc_sum_amt { get; set; }
-//    }
-//
-//    public class RecordStrict
-//    {
-//        public string sys_acs_cd { get; set; }
-//        public int? cst_nm { get; set; }
-//        public string cst_nam { get; set; }
-//        public double? bsns_srvc_nm { get; set; }
-//        public string bsns_trn_long_nam { get; set; }
-//        public string bsns_srvc_prcs_dt { get; set; }
-//        public double? plcy_nm { get; set; }
-//        public string plt_cd { get; set; }
-//        public string iss_stck_ref_nm { get; set; }
-//        public object bsns_srvc_sum_amt { get; set; }
-//    }
-
+    
     public class RecordRaw1
     {
         public object sys_acs_cd { get; set; }

@@ -12,6 +12,19 @@ namespace ExcelReportGenerator
         private string _name;
         public List<RecordRaw1> Records { get; private set; }
 
+        public string NameWithComma
+        {
+            get
+            {
+                if (paramsList != null)
+                {
+                    return String.Format("{0} {1}, {2}", paramsList[0], paramsList[1], paramsList[2]);
+                }
+
+                return String.Empty;
+            }
+        }
+
         public string Name
         {
             get { return _name; }
@@ -19,6 +32,19 @@ namespace ExcelReportGenerator
             {
                 _name = value;
                 paramsList = reverseStringFormat(NameTemplate, value);
+            }
+        }
+
+        public string MonthNameAndYear
+        {
+            get
+            {
+                if (paramsList != null)
+                {
+                    return String.Format("{0} {1}", paramsList[0],paramsList[2]);
+                }
+
+                return String.Empty;
             }
         }
 

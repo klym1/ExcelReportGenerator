@@ -71,16 +71,13 @@ namespace ReportGenerator.WinForms
                         modelsProcessor.Process();
 
                         Invoke(new Action(() => EnableAll(true)));
-
-                        XtraMessageBox.Show("Done!");
-
                     }
 
                 }
                 catch (Exception ew)
                 {
-                    EnableAll(true);
-                    XtraMessageBox.Show("Error" + ew);
+                    Invoke(new Action(() => EnableAll(true)));
+                    XtraMessageBox.Show("Error" + ew.Message);
                 }
             }));
 
