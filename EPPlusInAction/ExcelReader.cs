@@ -28,7 +28,9 @@ namespace ExcelReportGenerator
 
                 var list = new List<RecordRaw1>();
 
-                for (int i = 0; i < g.GetLength(0); i++)
+                //excluding headers, starting from first row
+
+                for (int i = 1; i < g.GetLength(0); i++)
                 {
                     var row = new RecordRaw1
                     {

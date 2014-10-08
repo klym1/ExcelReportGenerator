@@ -49,7 +49,7 @@ namespace ExcelReportGenerator
                     }
                 }
 
-                return (null);
+                return 0;
             }
         }
 
@@ -67,7 +67,7 @@ namespace ExcelReportGenerator
                     }
                 }
 
-                return (null);
+                return 0;
             }
         }
 

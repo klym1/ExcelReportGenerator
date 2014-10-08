@@ -1,20 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Data;
-using System.Data.OleDb;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DevExpress.DocumentServices.ServiceModel.DataContracts.Xpf.Designer;
 using DevExpress.XtraEditors;
-using DevExpress.XtraEditors.Controls;
-using DevExpress.XtraLayout.Utils;
 using DevExpress.XtraPrinting.Native;
 using ExcelReportGenerator;
 
@@ -56,13 +45,11 @@ namespace ReportGenerator.WinForms
 
         private void simpleButton2_Click(object sender, EventArgs e)
         {
-            //layoutControlItem5.Visibility = LayoutVisibility.Always;
-
-            simpleButtonGenerate.Enabled = false;
+            EnableAll(false);
 
             var allTasks = checkedListBoxControl1.Items.Count;
+            
             j = 0;
-
             monthModels.Clear();
             
             var tasks = Enumerable.Range(0, allTasks).Select(it => new Task(() =>
@@ -83,10 +70,7 @@ namespace ReportGenerator.WinForms
 
                         modelsProcessor.Process();
 
-                        Invoke(new Action(() =>
-                        {
-                            simpleButtonGenerate.Enabled = true;      
-                        }));
+                        Invoke(new Action(() => EnableAll(true)));
 
                         XtraMessageBox.Show("Done!");
 
@@ -95,14 +79,18 @@ namespace ReportGenerator.WinForms
                 }
                 catch (Exception ew)
                 {
+                    EnableAll(true);
                     XtraMessageBox.Show("Error" + ew);
                 }
             }));
 
 
             Parallel.ForEach(tasks, it => it.Start());
+        }
 
-
+        private void EnableAll(bool state)
+        {
+            simpleButtonGenerate.Enabled = state;
         }
     }
 }
