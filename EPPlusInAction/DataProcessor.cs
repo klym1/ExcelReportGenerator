@@ -20,31 +20,22 @@ namespace ExcelReportGenerator
         {
           //  Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             
-          //  string file = "Quarter-Report.xlsx";
-
             string file = Path.GetTempFileName() + ".xlsx";
-
-            //var excel = new ExcelFile.net.ExcelFile(true);
-
+            
             var workbook = new XLWorkbook();
-           // var worksheet = workbook.Worksheets.Add("Sample Sheet");
-
-           // workbook
-
-           // worksheet.Cell("A1").Value = "Hello World!";
-          //  workbook.SaveAs("HelloWorld.xlsx");
             
             foreach (var monthSheetModel in monthSheets)
             {
                 var worksheet = workbook.Worksheets.Add(monthSheetModel.Name);
-             //   excel.Sheet(monthSheetModel.Name, 15);
-
-                var col1 = worksheet.Column("A");
-                col1.Width = 20;
-
+                
                 var row1 = worksheet.Row(1);
                 row1.Style.Font.Bold = true;
                 row1.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                var col1 = worksheet.Column("A");
+                col1.Width = 20;
+                col1.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+
                 
                 for (int i = 0; i < monthSheetModel.Columns.ToArray().Length; i++)
                 {
@@ -59,9 +50,10 @@ namespace ExcelReportGenerator
                 for (j = 0; j < monthSheetModel.DaySheetModels.Count; j++)
                 {
                     //row = excel.Row();
-
-
-                    worksheet.Row(j + 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                    if (j > 0)
+                    {
+                        worksheet.Column(j + 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                    }
 
                     var dict = monthSheetModel.DaySheetModels[j].Row;
 
@@ -81,11 +73,9 @@ namespace ExcelReportGenerator
                     }
                 }
 
-               // excel.Row();
-               // row = excel.Row();
-               // row.Cell(null);
-
                 worksheet.Row(j + 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                worksheet.Row(j + 3).Style.Font.FontSize = 20;
+                worksheet.Row(j + 3).Style.Font.Bold = true;
 
                 for (int i = 0; i < monthSheetModel.ColumnsTotals.ToArray().Length; i++)
                 {
@@ -93,22 +83,12 @@ namespace ExcelReportGenerator
 
                     worksheet.Cell(j + 3, i + 2).Value = column;
 
-                    //  row.Cell(column, excel.NewStyle().Bold().Align(HorizontalAlignment.Center).FontSize(20));
                 }
-
-               // row.Empty();
                 
-//                row.Cell(monthSheetModel.ColumnsTotals.Sum(), 1, 2,
-//                    excel.NewStyle().
-//                    Align(HorizontalAlignment.Center)
-//                    .FontSize((double)20)
-//                    
-//                    .Color(HSSFColor.Red.Index)
-//                    );
-
+                worksheet.Cell(j + 3, monthSheetModel.ColumnsTotals.ToArray().Length + 3).Value = monthSheetModel.ColumnsTotals.Sum();
+                worksheet.Column(monthSheetModel.ColumnsTotals.ToArray().Length + 3).Width = 20;
             }
             
-           // excel.Save(file);
 
             workbook.SaveAs(file);
 
