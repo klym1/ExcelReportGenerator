@@ -122,8 +122,13 @@ namespace ExcelReportGenerator
                     {
                         DayNumber = monthModel.NameWithComma
                     };
-                    
-                    var rows = from record in FilterRecords(monthModel.Records)
+
+                    var recordsWithDistintClient = from record in monthModel.Records
+                        group record by record.cst_nm
+                        into groupped
+                        select groupped.First();
+
+                    var rows = from record in FilteredRecords(recordsWithDistintClient.ToList())
                         group record by record.sys_acs_cd
                         into groupped
                         select new
@@ -153,7 +158,7 @@ namespace ExcelReportGenerator
             GenerateExcelResult(monthSheets);
         }
 
-        private IEnumerable<RecordRaw1> FilterRecords(List<RecordRaw1> input)
+        private IEnumerable<RecordRaw1> FilteredRecords(List<RecordRaw1> input)
         {
             var filteredCollection = new Collection<RecordRaw1>();
 
