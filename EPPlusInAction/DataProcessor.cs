@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using NPOI.HSSF.Util;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
+using ClosedXML.Excel;
 
 namespace ExcelReportGenerator
 {
@@ -27,31 +24,50 @@ namespace ExcelReportGenerator
 
             string file = Path.GetTempFileName() + ".xlsx";
 
-            var excel = new ExcelFile.net.ExcelFile(true);
-            
+            //var excel = new ExcelFile.net.ExcelFile(true);
+
+            var workbook = new XLWorkbook();
+           // var worksheet = workbook.Worksheets.Add("Sample Sheet");
+
+           // workbook
+
+           // worksheet.Cell("A1").Value = "Hello World!";
+          //  workbook.SaveAs("HelloWorld.xlsx");
             
             foreach (var monthSheetModel in monthSheets)
             {
-                excel.Sheet(monthSheetModel.Name, 15);
+                var worksheet = workbook.Worksheets.Add(monthSheetModel.Name);
+             //   excel.Sheet(monthSheetModel.Name, 15);
 
-                var row = excel.Row();
+                var col1 = worksheet.Column("A");
+                col1.Width = 20;
 
-                row.Cell(null);
-
+                var row1 = worksheet.Row(1);
+                row1.Style.Font.Bold = true;
+                row1.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                
                 for (int i = 0; i < monthSheetModel.Columns.ToArray().Length; i++)
                 {
                     var column = monthSheetModel.Columns.ToArray()[i];
 
-                    row.Cell(column, excel.NewStyle().Align(HorizontalAlignment.Center).Bold());
+                //    row.Cell(column, excel.NewStyle().Align(HorizontalAlignment.Center).Bold());
+                    worksheet.Cell(1, i + 2).Value = column;
                 }
 
-                for (int j = 0; j < monthSheetModel.DaySheetModels.Count; j++)
+                int j;
+
+                for (j = 0; j < monthSheetModel.DaySheetModels.Count; j++)
                 {
-                    row = excel.Row();
+                    //row = excel.Row();
+
+
+                    worksheet.Row(j + 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
                     var dict = monthSheetModel.DaySheetModels[j].Row;
 
-                    row.Cell(monthSheetModel.DaySheetModels[j].DayNumber);
+                  //  row.Cell(monthSheetModel.DaySheetModels[j].DayNumber);
+
+                    worksheet.Cell(j + 2, 1).Value = "'" + monthSheetModel.DaySheetModels[j].DayNumber;
 
                     for (int i = 0; i < monthSheetModel.Columns.ToArray().Length; i++)
                     {
@@ -59,39 +75,43 @@ namespace ExcelReportGenerator
 
                         if (dict.ContainsKey(column))
                         {
-                            row.Cell(dict[column]);
+                            worksheet.Cell(j + 2, i + 2).Value = dict[column];
                         }
-                        else
-                        {
-                            row.Empty();
-                        }
+
                     }
                 }
 
-                excel.Row();
-                row = excel.Row();
-                row.Cell(null);
+               // excel.Row();
+               // row = excel.Row();
+               // row.Cell(null);
+
+                worksheet.Row(j + 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
                 for (int i = 0; i < monthSheetModel.ColumnsTotals.ToArray().Length; i++)
                 {
                     var column = monthSheetModel.ColumnsTotals.ToArray()[i];
 
-                    row.Cell(column, excel.NewStyle().Bold().Align(HorizontalAlignment.Center).FontSize(20));
+                    worksheet.Cell(j + 3, i + 2).Value = column;
+
+                    //  row.Cell(column, excel.NewStyle().Bold().Align(HorizontalAlignment.Center).FontSize(20));
                 }
 
-                row.Empty();
+               // row.Empty();
                 
-                row.Cell(monthSheetModel.ColumnsTotals.Sum(), 1, 2,
-                    excel.NewStyle().
-                    Align(HorizontalAlignment.Center)
-                    .FontSize((double)20)
-                    
-                    .Color(HSSFColor.Red.Index)
-                    );
+//                row.Cell(monthSheetModel.ColumnsTotals.Sum(), 1, 2,
+//                    excel.NewStyle().
+//                    Align(HorizontalAlignment.Center)
+//                    .FontSize((double)20)
+//                    
+//                    .Color(HSSFColor.Red.Index)
+//                    );
 
             }
             
-            excel.Save(file);
-            
+           // excel.Save(file);
+
+            workbook.SaveAs(file);
+
             System.Diagnostics.Process.Start(file);
         }
 

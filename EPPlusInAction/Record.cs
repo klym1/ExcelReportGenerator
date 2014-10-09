@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using ExcelFile.net;
-using NPOI.HSSF.UserModel;
 
 namespace ExcelReportGenerator
 {
