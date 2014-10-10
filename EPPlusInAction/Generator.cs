@@ -50,6 +50,8 @@ namespace ExcelReportGenerator
 
             worksheet.Column(1).Width = 25;
             worksheet.Column(1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
+            worksheet.Column(1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            worksheet.Column(1).Style.Font.SetBold();
 
             worksheet.Column(2).Width = 20;
             worksheet.Column(2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
@@ -74,10 +76,13 @@ namespace ExcelReportGenerator
                         worksheet
                             .Range(startingRow, 1, i, 1)
                             .Merge();
-                        
+
+                        worksheet.Cell(i , 1).Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+                        worksheet.Cell(i , 2).Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+                        worksheet.Cell(i , 3).Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+
                         startingRow = i + 1;
                     }
-                   
                 }
 
                 worksheet.Cell(i + 1, 1).Value = "'" + agentCode;
