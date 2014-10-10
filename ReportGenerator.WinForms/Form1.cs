@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using DevExpress.XtraEditors;
-using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraPrinting.Native;
 using ExcelReportGenerator;
+using ExcelReportGenerator.Models;
 
 namespace ReportGenerator.WinForms
 {
@@ -15,13 +14,9 @@ namespace ReportGenerator.WinForms
     {
         public Form1()
         {
-            InitializeComponent();
-
-            monthModels = new Collection<MonthModel>();
+            InitializeComponent(); 
         }
         
-        private static Collection<MonthModel> monthModels { get; set; } 
-
         private void buttonBrowseFiles_Click_1(object sender, EventArgs e)
         {
             openFileDialog1.Multiselect = true;
@@ -42,16 +37,9 @@ namespace ReportGenerator.WinForms
             }
         }
 
-        private static int j;
-
         private List<string> CheckedItems
         {
-            get
-            {
-             var result = checkedListBoxControl1.Items.GetCheckedValues();
-
-                return result.Cast<string>().ToList();
-            }
+            get { return checkedListBoxControl1.Items.GetCheckedValues().Cast<string>().ToList(); }
         }
 
         private void simpleButton2_Click(object sender, EventArgs e)
@@ -60,27 +48,19 @@ namespace ReportGenerator.WinForms
             
             if(allTasks == 0) return;
                 
-                EnableAll(false);
+            EnableAll(false);
 
-            j = 0;
-            monthModels.Clear();
+            var  monthModels = new Collection<MonthModel>();
             
-          //  var tasks = Enumerable.Range(0, allTasks).Select(it => new Task(() =>
-          //  {
-
             BeginInvoke(new Action(() =>
             {
-
                 for (int it = 0; it < allTasks; it++)
                 {
                     try
                     {
-                        var g = new ExcelReader((string)CheckedItems[it]);
+                        var excelReader = new ExcelReader(CheckedItems[it]);
 
-                        monthModels.Add(g.GetMonthModel());
-
-                        j++;
-
+                        monthModels.Add(excelReader.GetMonthModel());
                     }
                     catch (Exception ew)
                     {
@@ -94,20 +74,14 @@ namespace ReportGenerator.WinForms
                     }
                 }
 
+                var dataProcessor = new DataProcessor(monthModels);
 
-                var modelsProcessor = new DataProcessor(monthModels);
+                var modelsProcessor = new Generator(dataProcessor);
 
-                modelsProcessor.Process();
+                modelsProcessor.GenerateExcelResult();
 
                 Invoke(new Action(() => EnableAll(true)));
-
             }));
-
-            
-            
-            //  }));
-            
-         //   Parallel.ForEach(tasks, it => it.Start());
         }
 
         private void EnableAll(bool state)

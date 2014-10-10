@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace ExcelReportGenerator
+namespace ExcelReportGenerator.Models
 {
     [DebuggerDisplay("Name = {Name}")]
     public class MonthModel
     {
         private string _name;
-        public List<RecordRaw1> Records { get; private set; }
+        public List<Record> Records { get; private set; }
 
         public string NameWithComma
         {
@@ -121,10 +121,10 @@ namespace ExcelReportGenerator
 
         public MonthModel()
         {
-            Records = new List<RecordRaw1>();
+            Records = new List<Record>();
         }
 
-        public MonthModel(IEnumerable<RecordRaw1> records)
+        public MonthModel(IEnumerable<Record> records)
         {
             Records = records.ToList();
         }

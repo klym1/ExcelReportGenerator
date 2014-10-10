@@ -34,6 +34,7 @@ namespace ReportGenerator.WinForms
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.defaultLookAndFeel = new DevExpress.LookAndFeel.DefaultLookAndFeel(this.components);
             this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+            this.pictureEdit1 = new DevExpress.XtraEditors.PictureEdit();
             this.simpleButtonSelectUnselectAll = new DevExpress.XtraEditors.SimpleButton();
             this.labelControl2 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
@@ -49,10 +50,10 @@ namespace ReportGenerator.WinForms
             this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem6 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem7 = new DevExpress.XtraLayout.LayoutControlItem();
-            this.pictureEdit1 = new DevExpress.XtraEditors.PictureEdit();
             this.layoutControlItem8 = new DevExpress.XtraLayout.LayoutControlItem();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
             this.layoutControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureEdit1.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.progressBarControl1.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.checkedListBoxControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
@@ -63,7 +64,6 @@ namespace ReportGenerator.WinForms
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem7)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureEdit1.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem8)).BeginInit();
             this.SuspendLayout();
             // 
@@ -89,6 +89,21 @@ namespace ReportGenerator.WinForms
             this.layoutControl1.Size = new System.Drawing.Size(551, 391);
             this.layoutControl1.TabIndex = 5;
             this.layoutControl1.Text = "layoutControl1";
+            // 
+            // pictureEdit1
+            // 
+            this.pictureEdit1.EditValue = global::ReportGenerator.WinForms.Properties.Resources.logo;
+            this.pictureEdit1.Location = new System.Drawing.Point(10, 10);
+            this.pictureEdit1.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureEdit1.Name = "pictureEdit1";
+            this.pictureEdit1.Properties.AllowFocused = false;
+            this.pictureEdit1.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
+            this.pictureEdit1.Properties.PictureAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.pictureEdit1.Properties.PictureInterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
+            this.pictureEdit1.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Stretch;
+            this.pictureEdit1.Size = new System.Drawing.Size(368, 61);
+            this.pictureEdit1.StyleController = this.layoutControl1;
+            this.pictureEdit1.TabIndex = 12;
             // 
             // simpleButtonSelectUnselectAll
             // 
@@ -279,21 +294,6 @@ namespace ReportGenerator.WinForms
             this.layoutControlItem7.TextToControlDistance = 0;
             this.layoutControlItem7.TextVisible = false;
             // 
-            // pictureEdit1
-            // 
-            this.pictureEdit1.EditValue = global::ReportGenerator.WinForms.Properties.Resources.logo;
-            this.pictureEdit1.Location = new System.Drawing.Point(10, 10);
-            this.pictureEdit1.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureEdit1.Name = "pictureEdit1";
-            this.pictureEdit1.Properties.AllowFocused = false;
-            this.pictureEdit1.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
-            this.pictureEdit1.Properties.PictureAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.pictureEdit1.Properties.PictureInterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
-            this.pictureEdit1.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Stretch;
-            this.pictureEdit1.Size = new System.Drawing.Size(368, 61);
-            this.pictureEdit1.StyleController = this.layoutControl1;
-            this.pictureEdit1.TabIndex = 12;
-            // 
             // layoutControlItem8
             // 
             this.layoutControlItem8.Control = this.pictureEdit1;
@@ -318,13 +318,14 @@ namespace ReportGenerator.WinForms
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(551, 391);
             this.Controls.Add(this.layoutControl1);
+            this.MinimumSize = new System.Drawing.Size(567, 429);
             this.Name = "Form1";
-            this.MinimumSize = new Size(640, 480);
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Report Generator";
+            this.Text = "Team Autopac Report Tool";
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
             this.layoutControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureEdit1.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.progressBarControl1.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.checkedListBoxControl1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
@@ -335,7 +336,6 @@ namespace ReportGenerator.WinForms
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem7)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureEdit1.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem8)).EndInit();
             this.ResumeLayout(false);
 

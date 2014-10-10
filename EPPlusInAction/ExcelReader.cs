@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using ExcelReportGenerator.Models;
 
 namespace ExcelReportGenerator
 {
@@ -26,7 +27,7 @@ namespace ExcelReportGenerator
             {
                 var g = t.Page_Load(_filePath);
 
-                var list = new List<RecordRaw1>();
+                var list = new List<Record>();
 
                 //excluding headers, starting from first row
 
@@ -34,7 +35,7 @@ namespace ExcelReportGenerator
                 
                 for (int i = 1; i < rowsNumber; i++)
                 {
-                    var row = new RecordRaw1
+                    var row = new Record
                     {
                         sys_acs_cd = g[i, 0],
                         cst_nm = g[i, 1],
@@ -60,7 +61,6 @@ namespace ExcelReportGenerator
             {
                 throw new Exception("Input file was in incorrect format!");
             }
-            
         }
     }
 }

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using ClosedXML.Excel;
+using ExcelReportGenerator.Models;
 
 namespace ExcelReportGenerator
 {
@@ -16,86 +15,25 @@ namespace ExcelReportGenerator
             _monthModels = monthModels;
         }
 
-        public void GenerateExcelResult(Collection<MonthSheetModel> monthSheets)
+        private Collection<MonthSheetModel> _privateMonthSheetModels;
+        private Collection<SummarySheetRowModel> _privateSummarySheetRowModels;
+
+        public Collection<SummarySheetRowModel> GetSummarySheetRowModels()
         {
-          //  Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            
-            string file = Path.GetTempFileName() + ".xlsx";
-            
-            var workbook = new XLWorkbook();
-            
-            foreach (var monthSheetModel in monthSheets)
+            if (_privateSummarySheetRowModels == null)
             {
-                var worksheet = workbook.Worksheets.Add(monthSheetModel.Name);
-                
-                var row1 = worksheet.Row(1);
-                row1.Style.Font.Bold = true;
-                row1.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-
-                var col1 = worksheet.Column("A");
-                col1.Width = 20;
-                col1.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
-
-                
-                for (int i = 0; i < monthSheetModel.Columns.ToArray().Length; i++)
-                {
-                    var column = monthSheetModel.Columns.ToArray()[i];
-
-                //    row.Cell(column, excel.NewStyle().Align(HorizontalAlignment.Center).Bold());
-                    worksheet.Cell(1, i + 2).Value = column;
-                }
-
-                int j;
-
-                for (j = 0; j < monthSheetModel.DaySheetModels.Count; j++)
-                {
-                    //row = excel.Row();
-                    if (j > 0)
-                    {
-                        worksheet.Column(j + 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                    }
-
-                    var dict = monthSheetModel.DaySheetModels[j].Row;
-
-                  //  row.Cell(monthSheetModel.DaySheetModels[j].DayNumber);
-
-                    worksheet.Cell(j + 2, 1).Value = "'" + monthSheetModel.DaySheetModels[j].DayNumber;
-
-                    for (int i = 0; i < monthSheetModel.Columns.ToArray().Length; i++)
-                    {
-                        var column = monthSheetModel.Columns.ToArray()[i];
-
-                        if (dict.ContainsKey(column))
-                        {
-                            worksheet.Cell(j + 2, i + 2).Value = dict[column];
-                        }
-
-                    }
-                }
-
-                worksheet.Row(j + 3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                worksheet.Row(j + 3).Style.Font.FontSize = 20;
-                worksheet.Row(j + 3).Style.Font.Bold = true;
-
-                for (int i = 0; i < monthSheetModel.ColumnsTotals.ToArray().Length; i++)
-                {
-                    var column = monthSheetModel.ColumnsTotals.ToArray()[i];
-
-                    worksheet.Cell(j + 3, i + 2).Value = column;
-
-                }
-                
-                worksheet.Cell(j + 3, monthSheetModel.ColumnsTotals.ToArray().Length + 3).Value = monthSheetModel.ColumnsTotals.Sum();
-                worksheet.Column(monthSheetModel.ColumnsTotals.ToArray().Length + 3).Width = 20;
+                _privateSummarySheetRowModels = CalculateSummarySheetRowModels(GetMonthSheetModels());
             }
-            
 
-            workbook.SaveAs(file);
-
-            System.Diagnostics.Process.Start(file);
+            return _privateSummarySheetRowModels;
         }
 
-        public void Process()
+        public Collection<MonthSheetModel> GetMonthSheetModels()
+        {
+            return _privateMonthSheetModels ?? (_privateMonthSheetModels = CalculateSheetModels());
+        }
+
+        private Collection<MonthSheetModel> CalculateSheetModels()
         {
             var monthSheets = new Collection<MonthSheetModel>();
 
@@ -155,12 +93,38 @@ namespace ExcelReportGenerator
                 monthSheets.Add(model);
             }
 
-            GenerateExcelResult(monthSheets);
+            return monthSheets;
         }
 
-        private IEnumerable<RecordRaw1> FilteredRecords(List<RecordRaw1> input)
+        private Collection<SummarySheetRowModel> CalculateSummarySheetRowModels(
+            Collection<MonthSheetModel> inputMonthSheetModels)
         {
-            var filteredCollection = new Collection<RecordRaw1>();
+            var result = new Collection<SummarySheetRowModel>();
+
+            foreach (var inputMonthSheetModel in inputMonthSheetModels)
+            {
+                var monthName = inputMonthSheetModel.Name;
+
+                var dict = inputMonthSheetModel.Columns.Zip(inputMonthSheetModel.ColumnsTotals,
+                    (key, value) => new SummarySheetRowModel
+                    {
+                        AgentCode = key,
+                        NumberOfClients = value,
+                        Month = monthName
+                    });
+
+                foreach (var it in dict)
+                {
+                    result.Add(it);
+                }
+            }
+
+            return new Collection<SummarySheetRowModel>(result.OrderBy(it => it.AgentCode).ToList());
+        } 
+
+        private IEnumerable<Record> FilteredRecords(List<Record> input)
+        {
+            var filteredCollection = new Collection<Record>();
 
             var records = input.ToArray();
 
