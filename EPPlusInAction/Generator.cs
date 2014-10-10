@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using ClosedXML.Excel;
@@ -39,7 +41,7 @@ namespace ExcelReportGenerator
 
             workbook.SaveAs(file);
 
-            System.Diagnostics.Process.Start(file);
+            Process.Start(file);
         }
 
         private void GenerateSummaryTab(Collection<SummarySheetRowModel> monthSheets, XLWorkbook workbook)
@@ -56,12 +58,36 @@ namespace ExcelReportGenerator
             worksheet.Column(3).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
             worksheet.Column(3).Style.Font.Bold = true;
 
-            for (int i = 0; i < monthSheets.Count; i++)
+            int startingRow = 1;
+            string previousAgentCode = null;
+
+            int i;
+
+            for (i = 0; i < monthSheets.Count; i++)
             {
-                worksheet.Cell(i + 1, 1).Value = "'" + monthSheets[i].AgentCode;
+                var agentCode = monthSheets[i].AgentCode;
+
+                if (previousAgentCode != null)
+                {
+                    if (!previousAgentCode.Equals(agentCode))
+                    {
+                        worksheet
+                            .Range(startingRow, 1, i, 1)
+                            .Merge();
+                        
+                        startingRow = i + 1;
+                    }
+                   
+                }
+
+                worksheet.Cell(i + 1, 1).Value = "'" + agentCode;
                 worksheet.Cell(i + 1, 2).Value = "'" + monthSheets[i].Month;
                 worksheet.Cell(i + 1, 3).Value = monthSheets[i].NumberOfClients;
+
+                previousAgentCode = agentCode;
             }
+
+            worksheet.Range(startingRow, 1, i, 1).Merge();
         }
 
         private static void GenerateMonthTabs(Collection<MonthSheetModel> monthSheets, XLWorkbook workbook)

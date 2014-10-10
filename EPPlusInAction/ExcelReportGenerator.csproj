@@ -70,6 +70,7 @@
     <Compile Include="ExcelReader.cs" />
     <Compile Include="Models\MonthModel.cs" />
     <Compile Include="Models\Record.cs" />
+    <Compile Include="MonthesAndIds.cs" />
     <Compile Include="MonthSheetModel.cs" />
     <Compile Include="MyExcelReader.cs" />
     <Compile Include="Models\DaySheetModel.cs" />

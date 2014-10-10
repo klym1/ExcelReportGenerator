@@ -93,7 +93,7 @@ namespace ExcelReportGenerator
                 monthSheets.Add(model);
             }
 
-            return monthSheets;
+            return new Collection<MonthSheetModel>(monthSheets.OrderByDescending(it => it.Order).ToList());
         }
 
         private Collection<SummarySheetRowModel> CalculateSummarySheetRowModels(
@@ -119,7 +119,9 @@ namespace ExcelReportGenerator
                 }
             }
 
-            return new Collection<SummarySheetRowModel>(result.OrderBy(it => it.AgentCode).ToList());
+            return new Collection<SummarySheetRowModel>(result
+                .OrderBy(it => it.AgentCode)
+                .ThenBy(it => it.MonthId).ToList());
         } 
 
         private IEnumerable<Record> FilteredRecords(List<Record> input)

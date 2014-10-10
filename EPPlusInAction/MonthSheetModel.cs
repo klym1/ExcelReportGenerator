@@ -7,7 +7,20 @@ namespace ExcelReportGenerator
 {
     public class MonthSheetModel
     {
-        public string Name { get; set; }
+        private string _name;
+
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                Order = MonthesAndIds.GetMonthIdByName(value);
+            }
+        }
+
+        public int Order { get; set; }
+
         public Collection<DaySheetModel> DaySheetModels { get; set; }
 
         public HashSet<string> Columns { get; set; }
